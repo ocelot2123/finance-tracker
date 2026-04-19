@@ -2,10 +2,12 @@
 
 Minimal Next.js webhook receiver for `inbound.new`.
 
+Package manager: `bun`.
+
 It does 3 things:
 - requires a shared bearer API key
 - verifies inbound.new webhook requests
-- logs a truncated payload snapshot to Axiom
+- logs a truncated payload snapshot to Vercel logs
 - returns a small JSON summary so you can inspect the shape fast
 
 ## Setup
@@ -13,7 +15,7 @@ It does 3 things:
 1. Install deps:
 
 ```bash
-npm install
+bun install
 ```
 
 2. Create `apps/web/.env.local` from `apps/web/.env.example`.
@@ -27,10 +29,17 @@ Authorization: Bearer <your INBOUND_WEBHOOK_API_KEY>
 4. Start dev:
 
 ```bash
-npm run dev
+bun run dev
 ```
 
-5. Point your inbound.new webhook endpoint at:
+5. Optional checks:
+
+```bash
+bun run typecheck
+bun run build
+```
+
+6. Point your inbound.new webhook endpoint at:
 
 ```text
 https://your-domain/api/inbound
@@ -41,14 +50,6 @@ https://your-domain/api/inbound
 ```bash
 INBOUND_API_KEY=
 INBOUND_WEBHOOK_API_KEY=
-AXIOM_API_TOKEN=
-AXIOM_DATASET=
-```
-
-## Optional env
-
-```bash
-AXIOM_BASE_URL=https://api.axiom.co
 ```
 
 ## Notes
@@ -57,4 +58,4 @@ AXIOM_BASE_URL=https://api.axiom.co
 - Auth uses inbound.new's webhook verification helper.
 - Logged headers redact `authorization`, `cookie`, and `x-webhook-verification-token`.
 - Logged payload values are truncated to preserve shape without dumping unlimited email body data.
-# finance-tracker
+- Vercel should detect Bun from `bun.lock` and `packageManager`.

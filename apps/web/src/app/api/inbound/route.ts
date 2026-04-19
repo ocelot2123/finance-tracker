@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { logInboundWebhook } from "@/lib/axiom";
 import { hasValidWebhookApiKey } from "@/lib/auth";
-import { listNestedObjectKeys, listObjectKeys, safeParseJson } from "@/lib/json";
+import { listNestedObjectKeys, listObjectKeys, safeParseJson, sanitizeForLog, sanitizeHeaders } from "@/lib/json";
 import { verifyInboundWebhook } from "@/lib/inbound";
 
 export const runtime = "nodejs";
@@ -42,9 +41,15 @@ export async function POST(request: Request) {
       );
     }
 
-    await logInboundWebhook({
-      headers: request.headers,
-      payload: parsedBody.value
+    console.info("Inbound webhook received", {
+      verified: true,
+      webhookEvent: request.headers.get("x-webhook-event"),
+      endpointId: request.headers.get("x-endpoint-id"),
+      payloadKeys: listObjectKeys(parsedBody.value),
+      emailKeys: listNestedObjectKeys(parsedBody.value, ["email"]),
+      parsedDataKeys: listNestedObjectKeys(parsedBody.value, ["email", "parsedData"]),
+      headers: sanitizeHeaders(request.headers),
+      payload: sanitizeForLog(parsedBody.value)
     });
 
     return NextResponse.json({

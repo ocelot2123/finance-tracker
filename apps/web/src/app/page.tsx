@@ -11,8 +11,8 @@ export default function HomePage() {
     <main>
       <h1>Finance Tracker Webhook</h1>
       <p>
-        This app exposes <code>POST /api/inbound</code> for verified inbound.new webhooks and sends a
-        truncated payload snapshot to Axiom.
+        This app exposes <code>POST /api/inbound</code> for verified inbound.new webhooks and logs a
+        truncated payload snapshot to Vercel logs.
       </p>
 
       <p>
