@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { logInboundWebhook } from "@/lib/axiom";
+import { hasValidWebhookApiKey } from "@/lib/auth";
 import { listNestedObjectKeys, listObjectKeys, safeParseJson } from "@/lib/json";
 import { verifyInboundWebhook } from "@/lib/inbound";
 
@@ -16,18 +17,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    if (!hasValidWebhookApiKey(request.headers)) {
+      return unauthorizedResponse();
+    }
+
     const isVerified = await verifyInboundWebhook(request.headers);
 
     if (!isVerified) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "Unauthorized"
-        },
-        {
-          status: 401
-        }
-      );
+      return unauthorizedResponse();
     }
 
     const rawBody = await request.text();
@@ -72,4 +69,16 @@ export async function POST(request: Request) {
       }
     );
   }
+}
+
+function unauthorizedResponse() {
+  return NextResponse.json(
+    {
+      ok: false,
+      error: "Unauthorized"
+    },
+    {
+      status: 401
+    }
+  );
 }

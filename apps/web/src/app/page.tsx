@@ -15,6 +15,10 @@ export default function HomePage() {
         truncated payload snapshot to Axiom.
       </p>
 
+      <p>
+        Requests must include <code>Authorization: Bearer &lt;INBOUND_WEBHOOK_API_KEY&gt;</code>.
+      </p>
+
       <div className="card">
         <p>
           Local env file: <code>apps/web/.env.local</code>
