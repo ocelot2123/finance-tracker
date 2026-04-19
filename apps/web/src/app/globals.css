@@ -1,0 +1,50 @@
+:root {
+  color-scheme: dark;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #111827;
+  color: #f3f4f6;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 24px;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font-size: 2rem;
+}
+
+p {
+  color: #d1d5db;
+  line-height: 1.6;
+}
+
+code,
+pre {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+pre {
+  padding: 16px;
+  border-radius: 12px;
+  background: #1f2937;
+  overflow-x: auto;
+}
+
+.card {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #374151;
+  border-radius: 16px;
+  background: #111827;
+}
