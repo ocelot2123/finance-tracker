@@ -41,25 +41,32 @@ export async function POST(request: Request) {
       );
     }
 
-    console.info("Inbound webhook received", {
+    const webhookEvent = request.headers.get("x-webhook-event");
+    const endpointId = request.headers.get("x-endpoint-id");
+    const payloadKeys = listObjectKeys(parsedBody.value);
+    const emailKeys = listNestedObjectKeys(parsedBody.value, ["email"]);
+    const parsedDataKeys = listNestedObjectKeys(parsedBody.value, ["email", "parsedData"]);
+
+    console.info(JSON.stringify({
+      message: "Inbound webhook received",
       verified: true,
-      webhookEvent: request.headers.get("x-webhook-event"),
-      endpointId: request.headers.get("x-endpoint-id"),
-      payloadKeys: listObjectKeys(parsedBody.value),
-      emailKeys: listNestedObjectKeys(parsedBody.value, ["email"]),
-      parsedDataKeys: listNestedObjectKeys(parsedBody.value, ["email", "parsedData"]),
+      webhookEvent,
+      endpointId,
+      payloadKeys,
+      emailKeys,
+      parsedDataKeys,
       headers: sanitizeHeaders(request.headers),
       payload: sanitizeForLog(parsedBody.value)
-    });
+    }, null, 2));
 
     return NextResponse.json({
       ok: true,
       verified: true,
-      webhookEvent: request.headers.get("x-webhook-event"),
-      endpointId: request.headers.get("x-endpoint-id"),
-      payloadKeys: listObjectKeys(parsedBody.value),
-      emailKeys: listNestedObjectKeys(parsedBody.value, ["email"]),
-      parsedDataKeys: listNestedObjectKeys(parsedBody.value, ["email", "parsedData"])
+      webhookEvent,
+      endpointId,
+      payloadKeys,
+      emailKeys,
+      parsedDataKeys
     });
   } catch (error: unknown) {
     console.error("Inbound webhook handler failed", error);
