@@ -24,6 +24,10 @@ const MAX_OBJECT_KEYS = 50;
 const REDACTED_HEADER_NAMES = new Set([
   "authorization",
   "cookie",
+  "forwarded",
+  "x-vercel-oidc-token",
+  "x-vercel-proxy-signature",
+  "x-vercel-sc-headers",
   "x-webhook-verification-token"
 ]);
 

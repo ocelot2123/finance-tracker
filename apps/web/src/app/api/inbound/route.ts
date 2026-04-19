@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { hasValidWebhookApiKey } from "@/lib/auth";
-import { listNestedObjectKeys, listObjectKeys, safeParseJson, sanitizeForLog, sanitizeHeaders } from "@/lib/json";
+import { listNestedObjectKeys, listObjectKeys, safeParseJson, sanitizeForLog } from "@/lib/json";
 import { verifyInboundWebhook } from "@/lib/inbound";
 
 export const runtime = "nodejs";
@@ -46,18 +46,33 @@ export async function POST(request: Request) {
     const payloadKeys = listObjectKeys(parsedBody.value);
     const emailKeys = listNestedObjectKeys(parsedBody.value, ["email"]);
     const parsedDataKeys = listNestedObjectKeys(parsedBody.value, ["email", "parsedData"]);
+    const sanitizedPayload = sanitizeForLog(parsedBody.value);
 
-    console.info(JSON.stringify({
-      message: "Inbound webhook received",
-      verified: true,
-      webhookEvent,
-      endpointId,
-      payloadKeys,
-      emailKeys,
-      parsedDataKeys,
-      headers: sanitizeHeaders(request.headers),
-      payload: sanitizeForLog(parsedBody.value)
-    }, null, 2));
+    console.info(
+      `Inbound webhook summary\n${JSON.stringify(
+        {
+          verified: true,
+          webhookEvent,
+          endpointId,
+          payloadKeys,
+          emailKeys,
+          parsedDataKeys,
+          headers: {
+            "content-type": request.headers.get("content-type"),
+            "user-agent": request.headers.get("user-agent"),
+            "x-webhook-event": webhookEvent,
+            "x-webhook-timestamp": request.headers.get("x-webhook-timestamp"),
+            "x-endpoint-id": endpointId,
+            "x-email-id": request.headers.get("x-email-id"),
+            "x-message-id": request.headers.get("x-message-id")
+          }
+        },
+        null,
+        2
+      )}`
+    );
+
+    console.info(`Inbound webhook payload\n${JSON.stringify(sanitizedPayload, null, 2)}`);
 
     return NextResponse.json({
       ok: true,
